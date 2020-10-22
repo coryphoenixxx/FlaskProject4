@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block page_404 %}
+    <div class="text-center">
+        <h3 align="center"> Oooops! Page not found.</h3>
+        <p style="color: red"> {{ error }} </p>
+        <img src="/static/images/BadCat.gif" class="rounded" alt="BadCat">
+    </div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block profile %}
+    <div class="card my-4 mx-auto">
+      <div class="card-body m-2 m-md-4">
+        <article class="row">
+          <div class="col-5"><img src={{ teacher.picture }} class="img-fluid" alt=""></div>
+          <div class="col-7">
+
+            <section class="teacher=info">
+
+              <h1 class="h2">{{ teacher.name }}</h1>
+              <p>{% for goal in teacher.goals %}
+                      <a href={{ url_for('render_goal', goal=goal.title) }}><span class="badge badge-secondary mr-2">{{ goal.image + goal.trans_title }}</span></a>
+                  {% endfor %}
+                  Рейтинг: {{ teacher.rating }} Ставка: {{ teacher.price }} / час
+              </p>
+              <p>{{ teacher.about }}</p>
+
+            </section>
+
+            <section class="available">
+              <h4 class="mb-4 mt-5">Записаться на пробный урок</h4>
+                   {% for day in wd %}
+                    <h6 class="mt-4">{{ wd[day] }}</h6>
+                    {% if tt[day].values() %}
+                        {% for time in times %}
+                            {% if tt[day][time] %}
+                                <a class="btn btn-outline-success mr-2"
+                                   href={{ url_for('render_booking', id=teacher.id, day_of_week=day, time=time.split(':')[0]) }}>
+                                    {{ time }} свободно</a>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <p>Нет свободных уроков</p>
+                    {% endif %}
+                {% endfor %}
+
+
+
+            </section>
+
+          </div>
+        </article>
+      </div>
+
+    </div>
+{% endblock %}

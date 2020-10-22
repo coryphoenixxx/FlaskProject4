@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block booking %}
+    <div class="row mt-5">
+      <div class="col-10 col-md-6 offset-1 offset-md-3 mb-3">
+
+
+        <form action={{ url_for('render_booking', id=teacher.id, day_of_week=dow, time=time.split(':')[0]) }}
+                      method="POST" class="card mb-3">
+          <div class="card-body text-center pt-5">
+            <img src={{ teacher.picture }} class="mb-3" width="95" alt="">
+            <h2 class="h5 card-title mt-2 mb-2">{{ teacher.name }}</h2>
+            <p class="my-1">Запись на пробный урок</p>
+            <p class="my-1">{{ wd[dow] }}, {{ time + ':00' }}</p>
+          </div>
+          <hr />
+          <div class="card-body mx-3">
+              <div class="row">
+                  {{ form.dow(class="form-control", type="hidden", value=dow) }}
+                  {{ form.time(class="form-control", type="hidden", value=time + ':00') }}
+                  {{ form.teacher_id(class="form-control", type="hidden", value=teacher.id) }}
+              </div>
+
+              {{ form.name.label(class="mb-1 mt-2") }}
+              {{ form.name(class="form-control") }}
+
+              {{ form.phone.label(class="mb-1 mt-2") }}
+              {{ form.phone(class="form-control") }}
+              {{ form.csrf_token }}
+              {{ form.submit(class="btn btn-primary btn-block mt-4") }}
+
+          </div>
+        </form>
+
+
+      </div>
+    </div>
+{% endblock %}
