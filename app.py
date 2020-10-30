@@ -1,33 +1,31 @@
 from flask import render_template
-import random
+from sqlalchemy.sql.expression import func
 
+import data
+from forms import RequestForm, BookingForm
 from init import db, app
 from models import Teacher, TimeRecord, Booking, Request, Goal
-from forms import RequestForm, BookingForm
-import data
 
 
 @app.route('/')
 def render_index():
-    random_teachers = db.session.query(Teacher).all()
+    random_teachers = db.session.query(Teacher).order_by(func.random()).limit(6)
     goals = db.session.query(Goal).all()
-    random.shuffle(random_teachers)
-    return render_template('index.html', teachers=random_teachers[:6], goals=goals)
+    return render_template('index.html', teachers=random_teachers, goals=goals)
 
 
 @app.route('/goals/<goal>/')
 def render_goal(goal):
-    local_goal = db.session.query(Goal).filter(Goal.title==goal).first_or_404()
-    teachers = sorted(local_goal.teachers, key=lambda t: t.rating, reverse=True)
     goals = db.session.query(Goal).all()
+    local_goal = list(filter(lambda x: x.title == goal, goals))[0]
+    teachers = sorted(local_goal.teachers, key=lambda t: t.rating, reverse=True)
     return render_template('goal.html', teachers=teachers, goals=goals, goal=local_goal)
 
 
 @app.route('/profiles/<int:id>/')
 def render_profile(id):
     teacher = db.session.query(Teacher).get_or_404(id)
-    timetable = data.create_timetable(db.session.query(TimeRecord).
-                                      filter((TimeRecord.teacher_id==id) & (TimeRecord.value)).all())
+    timetable = data.create_timetable(db.session.query(TimeRecord).filter((TimeRecord.teacher_id == id) & (TimeRecord.value)).all())
     return render_template('profile.html', teacher=teacher, tt=timetable, times=data.teacher_times, wd=data.week_days)
 
 
@@ -55,9 +53,7 @@ def render_booking(id, day_of_week, time):
 
         db.session.add(booking)
         teacher = db.session.query(Teacher).get_or_404(id)
-        timerecord = db.session.query(TimeRecord).filter((TimeRecord.teacher_id == id) &
-                                                         (TimeRecord.dow==client['dow']) &
-                                                         (TimeRecord.time==client['time'])).first_or_404()
+        timerecord = db.session.query(TimeRecord).filter((TimeRecord.teacher_id == id) & (TimeRecord.dow == client['dow']) & (TimeRecord.time == client['time'])).first_or_404()
         timerecord.value = False
         db.session.commit()
         return render_template('booking_done.html', client=client, picture=teacher.picture, wd=data.week_days)
@@ -91,8 +87,7 @@ def render_request():
         db.session.add(request_for_teacher)
         db.session.commit()
 
-        goal = db.session.query(Goal).filter(Goal.title==client['goal']).first_or_404()
-
+        goal = db.session.query(Goal).filter(Goal.title == client['goal']).first_or_404()
         return render_template('request_done.html', client=client, goal=goal)
     return render_template('request.html', ctimes=data.client_times, form=form)
 

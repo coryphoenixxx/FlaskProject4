@@ -60,6 +60,3 @@ class Goal(db.Model):
     trans_title = db.Column(db.String, nullable=False, unique=True)
     image = db.Column(db.String, nullable=False, unique=True)
     teachers = db.relationship("Teacher", secondary=teachers_goals_association, back_populates='goals')
-
-
-db.create_all()

@@ -6,7 +6,7 @@
     <form action={{ url_for('render_request') }} method="POST" class="card mb-5">
         {{ form.csrf_token() }}
         <div class="card-body text-center pt-5">
-          <h1 class="h3 card-title mt-4 mb-2">Подбор преподавателя</h1>
+          <h1 class="h3 card-title mt-1 mb-2">Подбор преподавателя</h1>
           <p class="px-5">Напишите, чего вам нужно и&nbsp;мы&nbsp;подберем&nbsp;отличных&nbsp;ребят</p>
         </div>
         <hr>
@@ -17,8 +17,7 @@
             {{ form.goals.label }}
                {% for goal in form.goals %}
                 <div class="form-check">
-                    {{ goal(class="form-check-label") }}
-                    {{ goal.label(class="form-check-label") }}
+                    {{ goal(class="form-check-label") }}{{ goal.label(class="form-check-label") }}
                 </div>
             {% endfor %}
             </div>
